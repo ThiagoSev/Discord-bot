@@ -1,4 +1,2 @@
-config.json
-vasco.json
-node_modules/
 *.json
+node_modules/
