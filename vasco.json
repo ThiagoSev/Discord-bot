@@ -1,0 +1,12 @@
+{
+    "cenario":[
+        {"tema":"Cyberpunk"},
+        {"Tema":"Steampunk"},
+        {"Tema":"Espacial"},
+        {"Tema":"Dark Future"},
+        {"Tema":"Viajante Dimensional"},
+        {"Tema":"Mad Max"},
+        {"Tema":"Pré Histórico"},
+        {"Tema":"Piratas"}
+    ]
+}
