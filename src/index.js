@@ -1,7 +1,9 @@
-require('dotenv').config();
-const mongoose = require("mongoose");
-const Discord = require("discord.js");
-const { Client, GatewayIntentBits,IntentsBitField, roleMention } = require('discord.js');
+import dotenv from 'dotenv'
+//const Discord = require("discord.js");
+import { Client, GatewayIntentBits,IntentsBitField, roleMention, EmbedBuilder } from 'discord.js';
+import fs from "fs";
+import { channel } from "diagnostics_channel";
+
 const client = new Client({
 	intents: [
 		IntentsBitField.Flags.GuildMessages,
@@ -10,8 +12,8 @@ const client = new Client({
 		IntentsBitField.Flags.GuildMembers,
 	],
 });
-const fs = require("fs");
-const { channel } = require("diagnostics_channel");
+
+dotenv.config();
 
 
 let random = {employees:[ 
@@ -65,8 +67,7 @@ let tema = {employees:[
 ]}; 
 
 //const obj = JSON.parse(tema);
-const data = JSON.parse(power);
-const{EmbedBuilder} = require('discord.js');
+//const data = JSON.parse(power);
 
 client.on('interactionCreate', (interaction) =>{
 	if(!interaction.isChatInputCommand()) return;
@@ -89,6 +90,16 @@ client.on('interactionCreate', (interaction) =>{
 			.setTitle('Todos Temas')
 			.setDescription(textTema)
 			interaction.reply({embeds: [alltemas]});
+	}
+	if(interaction.commandName == "alterar-cor"){
+		if(interaction.user.id != "446445131936301066")return;
+		const cargo = interaction.options.get('cargo').role.id;
+		const cor = interaction.options.get('cor').value;
+		const guild = interaction.guild;
+		guild.roles.edit(`${cargo}`,{color: cor})
+			.then(updated => {console.log(`Edited role name to ${updated.name}`),
+				interaction.reply(`Cargo ${updated.name} editado.`)})
+  			.catch(console.error)
 	}
 });
 
