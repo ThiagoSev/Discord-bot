@@ -1,8 +1,7 @@
 import dotenv from 'dotenv'
 //const Discord = require("discord.js");
 import { Client, GatewayIntentBits,IntentsBitField, roleMention, EmbedBuilder } from 'discord.js';
-import fs from "fs";
-import { channel } from "diagnostics_channel";
+import * as db from 'database/index.js';
 
 const client = new Client({
 	intents: [
@@ -100,6 +99,10 @@ client.on('interactionCreate', (interaction) =>{
 			.then(updated => {console.log(`Edited role name to ${updated.name}`),
 				interaction.reply(`Cargo ${updated.name} editado.`)})
   			.catch(console.error)
+	}
+
+	if(interaction.commandName == "criarFicha"){
+		db.Quet
 	}
 });
 
