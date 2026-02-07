@@ -116,7 +116,7 @@ client.on('interactionCreate', async (interaction) =>{
 			if(interaction.options.get('id') != null)
 				userId = interaction.options.get('id').value;
 
-
+			
 			const charName = interaction.options.get('nome').value;
 			const userName = interaction.user.username;
 
@@ -125,28 +125,35 @@ client.on('interactionCreate', async (interaction) =>{
 		
 			const response = await fetch(url);
 			const data = await response.json();
+			console.log(data);
 
-			var description = `nome: ${data.charname}\n`+
-							   `classe: ${data.charclass}\n`+
-							   `nível: ${data.level}\n`
+			var description = `**nome:** ${data.charname}\n`+
+							   `**classe:** ${data.charclass}\n`+
+							   `**nível:** ${data.level}\n`
 			if(data.age == null)
-				description += `idade: desconhecida\n`
+				description += `**idade:** desconhecida\n`
 			else
-				description += `idade ${data.age}\n`
+				description += `**idade:** ${data.age}\n`
 
 			if(data.gender == null)
-				description += `gênero: desconhecido\n`
+				description += `**gênero:** desconhecido\n`
 			else
-				description += `gênero: ${data.gender}\n`
+				description += `**gênero:** ${data.gender}\n`
 
-			description += `userId: ${data.userId}\n`
+			description += `**userId:** ${data.userId}\n`
 
-			const AllChars = new EmbedBuilder()
-			.setColor(222222)
-			.setTitle(`Personagens de: ${userName}`)
+			//pega as propriedades do dono do personagem
+			const user = await client.users.fetch(userId);
+			const CharacterEmbed = new EmbedBuilder()
+			.setColor('237feb')
+			.setTitle(data.charname)
+			.setAuthor({name: user.username, iconURL: user.avatarURL()})
 			.setDescription(description)
+			.setThumbnail(data.image)
+			.setTimestamp()
+			.setFooter({ text: 'Faz o L', iconURL: 'https://cdn.discordapp.com/avatars/995691161958240338/c1783bd51d484e20da0989e8b45e8a85' });
 
-			interaction.reply({embeds: [AllChars]});
+			interaction.reply({embeds: [CharacterEmbed]});
 
 		}catch(err){
 			interaction.reply("erro ao buscar personagem: "+err);
@@ -167,22 +174,38 @@ client.on('interactionCreate', async (interaction) =>{
 		const url = `http://localhost:3000/character/all/${userId}`
 
 		try{
-			const response = await fetch(url, {
-				method: GET,
+			const response = await fetch(url);
+			const data = await response.json();
+
+			console.log(data);
+
+			var description = "";
+
+			data.forEach(character => {
+				description +=  `\n**${character.charname}**\n`;
+				if(character.charclass != null)
+					description += `ㅤ• ${character.charclass}\n`
+				if(character.age != null)
+					description += `ㅤ• ${character.age} anos\n`
+				if(character.level != null)
+					description += `ㅤ• nível ${character.charlevel}\n`
 			});
 
-			console.log(response);
-
-			var description = "omg hi";
-			const AllChars = new EmbedBuilder()
-			.setColor(222222)
-			.setTitle(`Personagens de ${userName}`)
+			//pega as propriedades do dono do personagem
+			const user = await client.users.fetch(userId);
+			const AllCharsEmbed = new EmbedBuilder()
+			.setColor('237feb')
+			.setTitle("Personagens de "+user.username)
+			.setThumbnail(user.avatarURL())
 			.setDescription(description)
+			.setTimestamp()
+			.setFooter({ text: 'Faz o L', iconURL: 'https://cdn.discordapp.com/avatars/995691161958240338/c1783bd51d484e20da0989e8b45e8a85' });
 
-			interaction.reply({embeds: [alltemas]});
+			interaction.reply({embeds: [AllCharsEmbed]});
 
 		}catch(err){
-			interaction.reply("erro ao criar usuário");
+			console.log("[ERRO: index.js] "+err);
+			interaction.reply("erro ao buscar personagens");
 			return null;
 		}
 	}

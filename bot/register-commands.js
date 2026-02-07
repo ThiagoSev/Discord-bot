@@ -99,8 +99,8 @@ const commands = [
             required: false
         },
         {
-            name: 'imagem',
-            description: 'imagem do personagem',
+            name: 'imagemURL',
+            description: 'URL da imagem do personagem',
             type: ApplicationCommandOptionType.String,
             required: false
         }

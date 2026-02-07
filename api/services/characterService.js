@@ -23,7 +23,7 @@ export async function getAllCharsByUserId(userId){
         'SELECT * FROM personagem WHERE userId = $1',
         [userId]
     );
-    return result;
+    return result.rows;
 }
 
 

@@ -11,7 +11,7 @@ CREATE TABLE personagem(
 	CharLevel varchar(10) DEFAULT 'Desconhecido',
 	age int,
 	gender varchar(1) DEFAULT '',
-	charImage bytea,
+	charImage text,
 	userId bigint NOT NULL,
 	FOREIGN KEY (userId) REFERENCES usuario(discordId)
 );

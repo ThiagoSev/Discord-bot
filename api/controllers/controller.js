@@ -49,9 +49,6 @@ export async function getCharacter(req, res){
 export async function getAllCharacters(req, res){
     const id = req.params.discordId;
     
-    if(id == null){
-        return res.status(400).json({error: 'id é obrigatório'});
-    }
     const character = await characterService.getAllCharsByUserId(id);
     
     if(!character){
