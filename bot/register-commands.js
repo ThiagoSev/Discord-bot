@@ -1,5 +1,7 @@
-require('dotenv').config();
-const {REST, Routes, ApplicationCommandOptionType} = require('discord.js');
+import dotenv from 'dotenv';
+dotenv.config();
+
+import {REST, Routes, ApplicationCommandOptionType} from 'discord.js';
 
 const commands = [
     {
@@ -30,7 +32,80 @@ const commands = [
             type: ApplicationCommandOptionType.String,
             required: true
         }],
-    }
+    },
+
+    //personagens
+
+    {
+        name: 'procurar-personagem',
+        description: 'mostra um usuário específico',
+        options: [{
+            name: 'nome',
+            description: 'nome do personagem.',
+            type: ApplicationCommandOptionType.String,
+            required: true
+        },
+        {
+            name: 'id',
+            description: 'id do dono.',
+            type: ApplicationCommandOptionType.User,
+            required: false
+        }
+        ]   
+    },
+
+    {
+        name: 'procurar-todos-personagens',
+        description: 'mostra todos os personagens de um usuário específico',
+        options: [{
+            name: 'usuario',
+            description: 'dono do personagem.',
+            type: ApplicationCommandOptionType.User,
+            required: false
+        }]
+    },
+
+    {
+        name: 'criar-personagem',
+        description: 'cria um novo personagem',
+        options: [{
+            name: 'nome',
+            description: 'nome do personagem',
+            type: ApplicationCommandOptionType.String,
+            required: true
+        },
+        {
+            name: 'classe',
+            description: 'classe do personagem',
+            type: ApplicationCommandOptionType.String,
+            required: false
+        },
+        {
+            name: 'nivel',
+            description: 'nível do personagem',
+            type: ApplicationCommandOptionType.String,
+            required: false
+        },
+        {
+            name: 'idade',
+            description: 'idade do personagem',
+            type: ApplicationCommandOptionType.Integer,
+            required: false
+        },
+        {
+            name: 'genero',
+            description: 'gênero do personagem',
+            type: ApplicationCommandOptionType.String,
+            required: false
+        },
+        {
+            name: 'imagem',
+            description: 'imagem do personagem',
+            type: ApplicationCommandOptionType.String,
+            required: false
+        }
+        ]
+    },
 
 ];
 const rest = new REST({version: '10'}).setToken(process.env.TOKEN);
@@ -44,6 +119,6 @@ const rest = new REST({version: '10'}).setToken(process.env.TOKEN);
         )
         console.log('registered');
     }catch(error){
-        console.log(`errror: ${error}`);
+        console.log(`error: ${error}`);
     }
 })();

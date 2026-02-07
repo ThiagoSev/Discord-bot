@@ -36,12 +36,9 @@ export async function createUser(req, res){
 //-------------------------
 
 export async function getCharacter(req, res){
-    const id = req.params.charId;
+    const {userId, name} = req.query;
     
-    if(id == null){
-        return res.status(400).json({error: 'id é obrigatório'});
-    }
-    const character = await characterService.getCharById(id);
+    const character = await characterService.getCharByName(userId, name);
     
     if(!character){
         return res.status(404).json({ error: 'Personagem não encontrado' });
@@ -65,17 +62,26 @@ export async function getAllCharacters(req, res){
 
 export async function createCharacter(req, res){
     const userId = req.params.discordId;
-    const {name, gender} = req.body;
+    const {name, charClass, level, age, gender, image} = req.body;
     if(userId == null){
-        return res.status(400).json({error: 'id é obrigatório'});
+        return res.status(400).json({error: 'id do usuário é obrigatório'});
     }
     
     const user = await userService.getUserById(userId);
 
+    //cria um usuário caso não exista
     if(!user){
-        return res.status(404).json({ error: 'Usuário não existe' });
-    }else{
-        const newChar = await characterService.createChar({name: name, gender: gender, userId: userId});
-        return res.json(newChar);
+
+        console.log("[createCharacter] cadastrando usuário...")
+        const newUser = userService.createUser(userId);
+        if(newUser == null){
+            return res.status(400).json({error: 'Erro ao registrar novo usuário'});
+        }
+        console.log("[createCharacter] usuário cadastrado.");
+
     }
+
+    const newChar = await characterService.createChar({name: name, charClass:charClass, level: level, age: age, gender: gender, image: image, userId: userId});
+    return res.json(newChar);
+    
 }

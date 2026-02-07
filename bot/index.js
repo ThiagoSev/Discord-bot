@@ -1,7 +1,9 @@
 import dotenv from 'dotenv'
 //const Discord = require("discord.js");
 import { Client, GatewayIntentBits,IntentsBitField, roleMention, EmbedBuilder } from 'discord.js';
-import * as db from 'database/index.js';
+import express from 'express'
+const app = express();
+app.use(express.json());
 
 const client = new Client({
 	intents: [
@@ -68,7 +70,7 @@ let tema = {employees:[
 //const obj = JSON.parse(tema);
 //const data = JSON.parse(power);
 
-client.on('interactionCreate', (interaction) =>{
+client.on('interactionCreate', async (interaction) =>{
 	if(!interaction.isChatInputCommand()) return;
 
 	if(interaction.commandName == "tema"){
@@ -101,12 +103,133 @@ client.on('interactionCreate', (interaction) =>{
   			.catch(console.error)
 	}
 
-	if(interaction.commandName == "criarFicha"){
-		db.Quet
+	//-----------------------------
+	//personagens
+	//-----------------------------
+
+	if(interaction.commandName == "procurar-personagem"){
+
+		try{
+			//userId será o id do requisitante caso ele não tenha escolhido um id
+			let userId =  interaction.user.id;
+
+			if(interaction.options.get('id') != null)
+				userId = interaction.options.get('id').value;
+
+
+			const charName = interaction.options.get('nome').value;
+			const userName = interaction.user.username;
+
+			const url = `http://localhost:3000/character/findByName?userId=${userId}&name=${charName}`
+
+		
+			const response = await fetch(url);
+			const data = await response.json();
+
+			var description = `nome: ${data.charname}\n`+
+							   `classe: ${data.charclass}\n`+
+							   `nível: ${data.level}\n`
+			if(data.age == null)
+				description += `idade: desconhecida\n`
+			else
+				description += `idade ${data.age}\n`
+
+			if(data.gender == null)
+				description += `gênero: desconhecido\n`
+			else
+				description += `gênero: ${data.gender}\n`
+
+			description += `userId: ${data.userId}\n`
+
+			const AllChars = new EmbedBuilder()
+			.setColor(222222)
+			.setTitle(`Personagens de: ${userName}`)
+			.setDescription(description)
+
+			interaction.reply({embeds: [AllChars]});
+
+		}catch(err){
+			interaction.reply("erro ao buscar personagem: "+err);
+			return null;
+		}
 	}
+
+	if(interaction.commandName == "procurar-todos-personagens"){
+		
+		//userId será o id do requisitante caso ele não tenha escolhido um id
+		let userId =  interaction.user.id;
+
+		if(interaction.options.get('id') != null)
+			userId = interaction.options.get('id').value;
+
+		const userName = interaction.user.username;
+
+		const url = `http://localhost:3000/character/all/${userId}`
+
+		try{
+			const response = await fetch(url, {
+				method: GET,
+			});
+
+			console.log(response);
+
+			var description = "omg hi";
+			const AllChars = new EmbedBuilder()
+			.setColor(222222)
+			.setTitle(`Personagens de ${userName}`)
+			.setDescription(description)
+
+			interaction.reply({embeds: [alltemas]});
+
+		}catch(err){
+			interaction.reply("erro ao criar usuário");
+			return null;
+		}
+	}
+
+	if(interaction.commandName == "criar-personagem"){
+		
+		const userId = interaction.user.id;
+		const name = interaction.options.get('nome').value;
+		const charClass = interaction.options.get('classe')?.value;
+		const level = interaction.options.get('nivel')?.value;
+		const age = interaction.options.get('idade')?.value;
+		const gender = interaction.options.get('genero')?.value;
+		const image = interaction.options.get('imagem')?.value;
+
+		const url = `http://localhost:3000/character/${userId}`
+
+		try{
+			const response = await fetch(url, {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json"
+				},
+				body: JSON.stringify({
+					name, 
+					charClass,
+					level,
+					age,
+					gender,
+					image
+				}),
+			});
+
+			if(!response.ok){
+				interaction.reply("erro ao criar personagem");
+			}
+
+			interaction.reply("personagem criado");
+
+		}catch(err){
+			interaction.reply("erro ao criar usuário: "+err);
+			return null;
+		}
+	}
+
 });
 
-client.on("ready", () => {
+client.on("clientReady", () => {
     console.log(`Bot on`);
 });
 client.on("guildCreate", guild => {

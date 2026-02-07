@@ -15,7 +15,7 @@ app.post('/users/:discordId',
 // persongem
 //-------------------
 
-app.get('/character/findById/:charId',
+app.get('/character/findByName',
     controller.getCharacter
 )
     
