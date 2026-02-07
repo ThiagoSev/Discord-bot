@@ -8,3 +8,11 @@ export async function getUserById(discordId){
     );
     return result.rows[0];
 }
+
+export async function createUser(discordId){
+    const result = await db.query(
+        'INSERT INTO usuario VALUES ($1)',
+        [discordId]
+    );
+    return result.rows[0];
+}
